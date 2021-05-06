@@ -1,4 +1,5 @@
 import numpy
+import scipy.integrate
 
 
 def Zcalc(i, r):  # i angle d'incidence, r angle de reception
@@ -19,10 +20,29 @@ def Zcalc(i, r):  # i angle d'incidence, r angle de reception
     refData = numpy.loadtxt(refFile + str(r2) + ".txt")
     lenData = numpy.loadtxt("/Users/theo/Documents/INRA/Données/Mesures/2908/2908/feuille/type_txt/Lambda.txt")
 
+    rcData = []
+    rcLenData = []
+    rsData = []
+    rsLenData = []
     for x in range(0, len(lenData)):
         if 655 <= lenData[x] <= 665:
             rc = leafData[x] / refData[x]
-            print(rc)
+            rcData.append(rc)
+            rcLenData.append(lenData[x])
         elif 725 <= lenData[x] <= 735:
             rs = leafData[x] / refData[x]
-            print(rs)
+            rsData.append(rs)
+            rsLenData.append(lenData[x])
+    Rcalc(rcLenData, rcData)
+    RMeanCalc(rcData)
+
+
+def Rcalc(lenData, rData):
+    iR = scipy.integrate.simps(rData, lenData)
+    print(rData)
+    print(lenData)
+    print(iR / (lenData[-1] - lenData[0]))
+
+def RMeanCalc(rData):
+    mR = sum(rData) / len(rData)
+    print(mR)
