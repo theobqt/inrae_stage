@@ -8,8 +8,8 @@ def Zcalc(i, r):  # i angle d'incidence, r angle de reception
         print("Wrong angle values")
         return 0
 
-    leafFile = "./data/2908/feuille/type_txt/leaf"
-    refFile = "./data/2908/reference/type_txt/Ref"
+    leafFile = "./Données/2908/feuille/type_txt/leaf"
+    refFile = "./Données/2908/reference/type_txt/Ref"
     i2 = int((i / 10) - 1)
     r2 = int(((r + 60) / 20) + 1)
     if i2 >= 10:
@@ -20,7 +20,7 @@ def Zcalc(i, r):  # i angle d'incidence, r angle de reception
     if os.path.isfile(leafFile) and os.path.isfile(refFile):
         leafData = numpy.loadtxt(leafFile)
         refData = numpy.loadtxt(refFile)
-        lenData = numpy.loadtxt("./data/2908/feuille/type_txt/Lambda.txt")
+        lenData = numpy.loadtxt("./Données/2908/feuille/type_txt/Lambda.txt")
     else:
         return 0
     rcData = []
