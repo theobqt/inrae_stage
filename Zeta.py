@@ -1,6 +1,20 @@
 import numpy
 import scipy.integrate
 import os.path
+import matplotlib.pyplot as plt
+
+
+def FindZeta():
+    for r in range(-60, 80, 20):
+        plt.xlabel("Angle incident")
+        plt.ylabel("Zeta")
+        plt.title("Zeta = f(i)")
+        zData = []
+        for i in range(20, 330, 10):
+            zData.append(Zcalc(i, r))
+        plt.plot(numpy.arange(20, 330, 10), zData, label=str(r))
+    plt.legend()
+    plt.show()
 
 
 def Zcalc(i, r):  # i angle d'incidence, r angle de reception
