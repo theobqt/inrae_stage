@@ -1,17 +1,29 @@
 import numpy
+import os
 
 
-def ExtractData():
-    leafFile = "./Données/2908/feuille/type_txt/leaf"
-    refFile = "./Données/2908/reference/type_txt/Ref"
+def InterpData(rep):
+    leafPath = "./Données/" + rep + "/feuille/type_txt/leaf"
+    refPath = "./Données/" + rep + "/reference/type_txt/Ref"
     lenData = numpy.loadtxt("./Données/2908/feuille/type_txt/Lambda.txt")
-    leafData = numpy.zeros((31, 7), numpy.ndarray)
-    tmpData = []
+
+    if not os.path.isdir("./Données/" + rep + "/reference/type_txt/interpData/"):
+        os.mkdir("./Données/" + rep + "/reference/type_txt/interpData/")
+    if not os.path.isdir("./Données/" + rep + "/feuille/type_txt/interpData/"):
+        os.mkdir("./Données/" + rep + "/feuille/type_txt/interpData/")
     for i in range(1, 32, 1):
         for j in range(1, 8, 1):
             if i < 10:
-                tmpData = numpy.loadtxt(leafFile + str(i) + str(j) + ".txt")
+                tmpData = numpy.loadtxt(leafPath + str(i) + str(j) + ".txt")
             else:
-                tmpData = numpy.loadtxt(leafFile + "a" + str(i) + str(j) + ".txt")
-                leafData[i-1][j-1] = numpy.interp(numpy.arange(450, 900, 2), lenData, tmpData)
-            numpy.savetxt("./Données/2908/feuille/type_txt/normalizedData/nLeaf" + str(i) + str(j) + ".txt", numpy.interp(numpy.arange(450, 900, 2), lenData, tmpData), "%6f")
+                tmpData = numpy.loadtxt(leafPath + "a" + str(i) + str(j) + ".txt")
+            numpy.savetxt("./Données/" + rep + "/feuille/type_txt/interpData/interpLeaf" + str(i) + str(j) + ".txt",
+                          numpy.interp(numpy.arange(450, 900), lenData, tmpData), "%6f")
+    for i in range(1, 15, 1):
+        for j in range(1, 8, 1):
+            if i < 10:
+                tmpData = numpy.loadtxt(refPath + str(i) + str(j) + ".txt")
+            else:
+                tmpData = numpy.loadtxt(refPath + "a" + str(i) + str(j) + ".txt")
+            numpy.savetxt("./Données/" + rep + "/reference/type_txt/interpData/interpRef" + str(i) + str(j) + ".txt",
+                          numpy.interp(numpy.arange(450, 900), lenData, tmpData), "%6f")
