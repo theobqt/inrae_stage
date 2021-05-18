@@ -1,12 +1,16 @@
+import importlib
 import matplotlib.pyplot as plt
 import numpy
 import matplotlib.cm as cm
+import DataClass
+
+importlib.reload(DataClass)
 
 numpy.set_printoptions(suppress=True)
 
 
-def PlotGraph(lam, rep):
-    data = FindRefl(lam, rep)
+def PlotGraph(lam, rep):  # graph 2D rectangulaire de la reflectance suivant i et r
+    data = GetData(lam, rep)
 
     fig, ax = plt.subplots()
     ax.imshow(data, interpolation='bilinear', cmap=cm.plasma, extent=[-60, 60, 20, 330])
@@ -17,46 +21,48 @@ def PlotGraph(lam, rep):
 
 
 def PlotPolarGraph(lam, rep):
-    data = FindRefl(lam, rep)
-    rad = 2 * numpy.pi / 360
-    # ax = plt.subplot(projection='polar')
-    # ax.set_rmax(7)
-    # ax.set_rticks([1, 2, 3, 4, 5, 6, 7])  # Less radial ticks
-    # ax.set_rlabel_position(0)  # Move radial labels away from plotted line
-    # ax.grid(True)
-    # ax.set_title("A line plot on a polar axis")
+    data = GetData(lam, rep)
+    refl = numpy.zeros((7, 37), numpy.float)
+    zen = []
+    for i in range(0, 37, 1):
+        zen.append(data[i][0].zen)
+        for j in range(0, 7, 1):
+            if data[i][j].refData != 0:
+                refl[j][i] = data[i][j].leafData / data[i][j].refData
+            else:
+                refl[j][i] = 0
 
     fig, ax = plt.subplots(subplot_kw=dict(projection='polar'))
-    ax.contourf(numpy.arange(0 * rad, 370 * rad, 10 * rad), numpy.arange(-60, 80, 20), data)
+    ax.contourf(numpy.arange(numpy.deg2rad(-90), numpy.deg2rad(280), numpy.deg2rad(10)), numpy.arange(-60, 80, 20), refl)
     plt.title("Reflectance en fonction des angles pour l = " + str(lam))
     plt.show()
+    print(zen)
 
 
-def FindRefl(lam, rep):
-    refData = numpy.zeros((28, 7), numpy.float)
-    data = numpy.zeros((7, 37), numpy.float)
-    for j in range(1, 8, 1):
-        for i in range(1, 29, 1):
-            if i < 15:
-                tmpData = numpy.loadtxt(
-                    "./Données/" + rep + "/reference/type_txt/interpData/interpRef" + str(i) + str(j) + ".txt")
-                refData[i - 1][j - 1] = tmpData[int((lam - 450))] / 0.92
-            else:
-                tmpData = numpy.loadtxt(
-                    "./Données/" + rep + "/reference/type_txt/interpData/interpRef" + str(29 - i) + str(j) + ".txt")
-                refData[i - 1][j - 1] = tmpData[int((lam - 450))] / 0.92
+def GetData(lam, rep):
+    data = numpy.zeros((37, 7), DataClass.Data)
 
-    for j in range(1, 8, 1):
-        for i in range(0, 37, 1):
-            if 2 <= i < 16 and refData[i][j - 1] != 0:
-                tmpData = numpy.loadtxt(
-                "./Données/" + rep + "/feuille/type_txt/interpData/interpLeaf" + str(i+1) + str(j) + ".txt")
-                data[7 - j][i] = tmpData[int((lam - 450))] / (refData[i - 1][j - 1] * 2)
-            elif 20 <= i < 34 and refData[i - 6][j - 1] != 0:
-                tmpData = numpy.loadtxt(
-                "./Données/" + rep + "/feuille/type_txt/interpData/interpLeaf" + str(i-3) + str(j) + ".txt")
-                data[7 - j][i] = tmpData[int((lam - 450))] / (refData[i - 6][j - 1] * 2)
-            else:
-                data[7 - j][i] = 0
-    # print(data)
+    for i in range(0, 37, 1):
+        for j in range(1, 8, 1):
+            data[i][j - 1] = DataClass.Data(i, j, lam, rep)
     return data
+
+
+def PlotRefl(lam, rep):
+    data = GetData(lam, rep)
+    plt.axes(polar=True)
+    for i in range(0, 37, 1):
+        for j in range(0, 7, 1):
+            if -80 <= data[i][j].inc <= -20:
+                x = data[i][j].zen * numpy.cos(data[i][j].azi)
+                y = data[i][j].zen * numpy.sin(data[i][j].azi)
+                r = numpy.sqrt(x ** 2 + y ** 2)
+                t = numpy.arctan2(y, x)
+                plt.plot(t, r, "r.", alpha=0.6)
+            if 20 <= data[i][j].inc <= 80:
+                x = data[i][j].zen * numpy.cos(numpy.pi + data[i][j].azi)
+                y = data[i][j].zen * numpy.sin(data[i][j].azi)
+                r = numpy.sqrt(x ** 2 + y ** 2)
+                t = numpy.arctan2(y, x)
+                plt.plot(t, r, "g.", alpha=0.6)
+    plt.show()
