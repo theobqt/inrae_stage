@@ -4,6 +4,7 @@ import Zeta
 import FileExtractor
 import Plotting
 import DataClass
+import numpy
 
 importlib.reload(Zeta)
 importlib.reload(FileExtractor)
@@ -11,22 +12,19 @@ importlib.reload(Plotting)
 importlib.reload(DataClass)
 plt.rcParams.update({'figure.max_open_warning': 0})
 
-# FileExtractor.InterpData("2908a")
-# FileExtractor.InterpData("2908b")
-# FileExtractor.InterpData("2908c")
-
-
-# Plotting.PlotGraph(450, "2908")
-# Plotting.PlotGraph(550, "2908")
-# Plotting.PlotGraph(650, "2908")
-# Plotting.PlotGraph(750, "2908")
-
-# Plotting.PlotPolarGraph(450, "2908")
-# Plotting.PlotPolarGraph(550, "2908")
-# Plotting.PlotPolarGraph(660, "2908")
-# Plotting.PlotPolarGraph(730, "2908")
+# nameData = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+#             'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+#             't', 'u', 'v', 'w', 'x', 'y', 'z', 'aa', 'ab', 'ac',
+#             'ad', 'ae', 'af', 'ag', 'ah', 'ai', 'aj', 'ak', 'al', 'am']
+# for n in nameData:
+#     FileExtractor.InterpData("2908" + n)
+#     FileExtractor.InterpRef("2908" + n, force=True)
 
 Plotting.PlotRefl(450, "2908")
 # Plotting.PlotRefl(550, "2908")
-# Plotting.PlotRefl(650, "2908")
-# Plotting.PlotRefl(750, "2908")
+# Plotting.PlotRefl(660, "2908")
+# Plotting.PlotRefl(730, "2908")
+
+# sp = numpy.loadtxt("./Données/Soleil1nm.txt")
+#
+# Zeta.GraphZeta(sp)
